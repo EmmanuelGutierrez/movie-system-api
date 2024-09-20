@@ -18,21 +18,26 @@ import { MovieModel } from './model/movie.model';
 // };
 
 export class MovieService {
-  private movieModel: typeof MovieModel;
-
-  constructor() {
-    this.movieModel = MovieModel;
-  }
+  private movieModel = MovieModel;
 
   async createMovie(data: CreateMovieDto) {
     try {
       // throw new Error("Error")
       const movie = await this.movieModel.create(data);
-      console.log(movie);
 
       return movie.save();
     } catch (error: any) {
       throw new HttpException(error.message ?? 'Error', 123);
+    }
+  }
+
+  async getAll() {
+    try {
+      // throw new Error("Error")
+      const movies = await this.movieModel.find()
+      return movies
+    } catch (error: any) {
+      throw new HttpException(error.message ?? 'Not found', 404);
     }
   }
 }

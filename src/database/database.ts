@@ -11,14 +11,11 @@ export const connectDB = async () => {
     throw new Error('db error');
   }
   const dbConnection = mongoose.connection;
-  console.log('1');
   dbConnection.once('open', () => {
     console.log('connected');
   });
-  console.log('2');
   dbConnection.on('error', (e) => {
     console.error(e);
   });
-  console.log('3');
   return;
 };

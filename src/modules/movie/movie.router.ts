@@ -1,14 +1,30 @@
 import { Router } from 'express';
-import { createMovieController } from './movie.controller';
+import { MovieController } from './movie.controller';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { validationHandler } from '../../common/utils/validationHandler';
+import { validationHandler } from '../../common/middlewares/validationHandler';
+import { FilterDto } from './dto/filter.dto';
 
-const router = Router();
 
-router.post(
-  '/create',
-  validationHandler(CreateMovieDto),
-  createMovieController,
-);
+export class MovieRouter {
+  private router = Router();
+  private movieController: MovieController = new MovieController();
+  constructor() {
+    this.initializeRouters();
+  }
 
-export const MovieRouter = router;
+  private initializeRouters() {
+    this.router.post(
+      '/create',
+      validationHandler(CreateMovieDto),
+      (req, res, next) =>
+        this.movieController.createMovieController(req, res, next),
+    );
+    this.router.get('/', validationHandler(FilterDto,'query'), (req, res, next) =>
+      this.movieController.getAll(req, res, next),
+    );
+  }
+
+  getRoute() {
+    return this.router;
+  }
+}

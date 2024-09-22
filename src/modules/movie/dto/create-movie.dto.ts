@@ -29,7 +29,7 @@ export class CreateMovieDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  readonly genre?: string[];
+  readonly genres?: string[];
 
   @IsOptional()
   @IsArray()

@@ -1,28 +1,16 @@
-// import { Model } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { HttpException } from '../../common/utils/error/HttpException';
 import { CreateMovieDto } from './dto/create-movie.dto';
+import { FilterDto } from './dto/filter.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MovieModel } from './model/movie.model';
-// import { MovieI } from './interface/movie.interface';
-
-// export const createMovieService = async (data: CreateMovieDto) => {
-//   try {
-//     // throw new Error("Error")
-//     const movie = await MovieModel.create(data);
-//     console.log(movie);
-
-//     return movie.save();
-//   } catch (error) {
-//     console.log(error);
-//     throw new HttpException('Error 1', 123);
-//   }
-// };
+import { MovieI } from './interface/movie.interface';
 
 export class MovieService {
   private movieModel = MovieModel;
 
   async createMovie(data: CreateMovieDto) {
     try {
-      // throw new Error("Error")
       const movie = await this.movieModel.create(data);
 
       return movie.save();
@@ -31,13 +19,66 @@ export class MovieService {
     }
   }
 
-  async getAll() {
+  async getAll(params: FilterDto) {
     try {
-      // throw new Error("Error")
-      const movies = await this.movieModel.find()
-      return movies
+      // const movies = await this.movieModel.find();
+      const { limit = 10, page = 1, genres, description } = params;
+      const filters: FilterQuery<MovieI> = {};
+      console.log(genres)
+      if (genres && genres.length) {
+        filters.genres = { $elemMatch: { $in: genres } };
+      }
+      if (description) {
+        filters.description = { $rejex: description };
+      }
+      filters.active = true;
+      const movies = await this.movieModel
+        .find(filters)
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      const total = await this.movieModel.countDocuments();
+      return { page, inThisPage: movies.length, total, data: movies };
     } catch (error: any) {
       throw new HttpException(error.message ?? 'Not found', 404);
+    }
+  }
+
+  async getOneById(id: string) {
+    try {
+      // const movies = await this.movieModel.find();
+      const movie = await this.movieModel.findById(id);
+
+      if (!movie) {
+        throw new HttpException('Not found', 404);
+      }
+      return movie;
+    } catch (error: any) {
+      throw new HttpException(error.message ?? 'Not found', 404);
+    }
+  }
+
+  async update(movieId: string, data: UpdateMovieDto) {
+    try {
+      const movie = await this.movieModel.updateOne({ _id: movieId }, data);
+
+      return movie;
+    } catch (error: any) {
+      throw new HttpException(error.message ?? 'Error', 123);
+    }
+  }
+
+  async logicDelete(movieId: string) {
+    try {
+      const movie = await this.getOneById(movieId);
+      const res = await this.movieModel.updateOne(
+        { _id: movieId },
+        { active: !movie.active },
+      );
+
+      return res;
+    } catch (error: any) {
+      throw new HttpException(error.message ?? 'Error', 123);
     }
   }
 }

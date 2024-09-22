@@ -15,4 +15,8 @@ export class FilterDto {
   @IsArray()
   @IsString({ each: true })
   genres?: string[];
+
+  @IsOptional()
+  @IsString()
+  description?: string[];
 }

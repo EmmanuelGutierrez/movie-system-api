@@ -4,6 +4,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { validationHandler } from '../../common/middlewares/validationHandler';
 import { FilterDto } from './dto/filter.dto';
 import { IdDto } from './dto/id.dto';
+import { cacheRedisHandler } from '../../common/middlewares/cache-redis';
 
 export class MovieRouter {
   private router = Router();
@@ -28,6 +29,7 @@ export class MovieRouter {
     this.router.get(
       '/',
       validationHandler(FilterDto, 'query'),
+      cacheRedisHandler,
       (req, res, next) => this.movieController.getAll(req, res, next),
     );
     this.router.get(

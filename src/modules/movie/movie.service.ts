@@ -5,6 +5,7 @@ import { FilterDto } from './dto/filter.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MovieModel } from './model/movie.model';
 import { MovieI } from './interface/movie.interface';
+import { redisClient } from '../../redis/redis-client';
 
 export class MovieService {
   private movieModel = MovieModel;
@@ -21,10 +22,10 @@ export class MovieService {
 
   async getAll(params: FilterDto) {
     try {
+
       // const movies = await this.movieModel.find();
       const { limit = 10, page = 1, genres, description } = params;
       const filters: FilterQuery<MovieI> = {};
-      console.log(genres)
       if (genres && genres.length) {
         filters.genres = { $elemMatch: { $in: genres } };
       }

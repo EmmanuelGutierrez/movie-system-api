@@ -12,6 +12,11 @@ const envVars = {
   DATABASE_PASS: process.env.DATABASE_PASS,
   DATABASE_HOST: process.env.DATABASE_HOST,
   DATABASE_CONNECTION: process.env.DATABASE_CONNECTION,
+
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT,
+  REDIS_DB: process.env.REDIS_DB,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
 };
 export const configInitJoi = () => {
   const envSchema = Joi.object().keys({
@@ -25,10 +30,14 @@ export const configInitJoi = () => {
     DATABASE_USER: Joi.string().required(),
     DATABASE_PASS: Joi.string().required(),
     DATABASE_CONNECTION: Joi.string().required(),
+    REDIS_HOST: Joi.string().required(),
+    REDIS_PORT: Joi.number().required(),
+    REDIS_DB: Joi.number().required(),
+    REDIS_PASSWORD: Joi.string(),
   });
   const { error } = envSchema
     .prefs({ errors: { label: 'key' } })
-    .validate(envVars, );
+    .validate(envVars);
   if (error) {
     console.error('Env vars error');
     error.details.map((e) => {
@@ -43,7 +52,7 @@ export const config = {
     port: envVars.PORT,
     jwtSecret: envVars.JWT_SECRET,
     apiKey: envVars.API_KEY,
-    env:envVars.ENV
+    env: envVars.ENV,
   },
   database: {
     dbName: envVars.DATABASE_NAME,
@@ -52,5 +61,11 @@ export const config = {
     dbPass: envVars.DATABASE_PASS,
     dbHost: envVars.DATABASE_HOST,
     dbConnection: envVars.DATABASE_CONNECTION,
+  },
+  redis: {
+    host: process.env.REDIS_HOST,
+    password: process.env.REDIS_PASSWORD,
+    port: Number(process.env.REDIS_PORT),
+    db: Number(process.env.REDIS_DB),
   },
 };

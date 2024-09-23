@@ -5,6 +5,8 @@ import { MainRouter } from './router';
 import { errorHandler } from './common/middlewares/errorHandler';
 import bodyParser from 'body-parser';
 import { queryParserHandler } from './common/middlewares/query-parser';
+import { redisClient } from './redis/redis-client';
+// import { initRedisConnection } from './redis/redis-client';
 configInitJoi();
 
 const app = express();
@@ -12,6 +14,8 @@ const main = async () => {
   const mainRouter = new MainRouter();
   app.use(bodyParser.json());
   app.use(queryParserHandler);
+  // await initRedisConnection();
+  redisClient
   await connectDB();
 
   app.use(mainRouter.getRoute());

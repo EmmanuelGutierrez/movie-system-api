@@ -2,21 +2,21 @@ import dotenv from 'dotenv';
 import Joi from 'joi';
 dotenv.config();
 const envVars = {
-  ENV: process.env.ENV,
-  PORT: process.env.PORT,
-  JWT_SECRET: process.env.JWT_SECRET,
-  API_KEY: process.env.API_KEY,
-  DATABASE_NAME: process.env.DATABASE_NAME,
-  DATABASE_PORT: process.env.DATABASE_PORT,
-  DATABASE_USER: process.env.DATABASE_USER,
-  DATABASE_PASS: process.env.DATABASE_PASS,
-  DATABASE_HOST: process.env.DATABASE_HOST,
-  DATABASE_CONNECTION: process.env.DATABASE_CONNECTION,
+  ENV: process.env.ENV!,
+  PORT: process.env.PORT!,
+  JWT_SECRET: process.env.JWT_SECRET!,
+  API_KEY: process.env.API_KEY!,
+  DATABASE_NAME: process.env.DATABASE_NAME!,
+  DATABASE_PORT: process.env.DATABASE_PORT!,
+  DATABASE_USER: process.env.DATABASE_USER!,
+  DATABASE_PASS: process.env.DATABASE_PASS!,
+  DATABASE_HOST: process.env.DATABASE_HOST!,
+  DATABASE_CONNECTION: process.env.DATABASE_CONNECTION!,
 
-  REDIS_HOST: process.env.REDIS_HOST,
-  REDIS_PORT: process.env.REDIS_PORT,
-  REDIS_DB: process.env.REDIS_DB,
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+  REDIS_HOST: process.env.REDIS_HOST!,
+  REDIS_PORT: process.env.REDIS_PORT!,
+  REDIS_DB: process.env.REDIS_DB!,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD!,
 };
 export const configInitJoi = () => {
   const envSchema = Joi.object().keys({

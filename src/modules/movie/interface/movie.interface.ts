@@ -1,4 +1,6 @@
-export interface MovieI {
+import { commonI } from "../../../common/models/common.model";
+
+export interface MovieI extends commonI {
   name: string;
   description: string;
   genres: string[];
@@ -6,5 +8,5 @@ export interface MovieI {
   directors: string[];
   duration: number;
   relase: number;
-  active:boolean
+  active: boolean;
 }

@@ -16,7 +16,7 @@ export class MovieService {
 
       return movie.save();
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 123);
+      throw new HttpException(error.message ?? 'Error', 500);
     }
   }
 
@@ -65,7 +65,7 @@ export class MovieService {
 
       return movie;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 123);
+      throw new HttpException(error.message ?? 'Error', 500);
     }
   }
 
@@ -79,7 +79,7 @@ export class MovieService {
 
       return res;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 123);
+      throw new HttpException(error.message ?? 'Error', 500);
     }
   }
 }

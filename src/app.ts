@@ -5,7 +5,11 @@ import { MainRouter } from './router';
 import { errorHandler } from './common/middlewares/errorHandler';
 import bodyParser from 'body-parser';
 import { queryParserHandler } from './common/middlewares/query-parser';
-import { redisClient } from './redis/redis-client';
+import './redis/redis-client';
+import './common/auth/strategies/passport-jwt';
+import './common/auth/strategies/passport-local';
+import './common/models/user-request';
+import { seedRoles } from './seed/roles.seed';
 // import { initRedisConnection } from './redis/redis-client';
 configInitJoi();
 
@@ -15,9 +19,8 @@ const main = async () => {
   app.use(bodyParser.json());
   app.use(queryParserHandler);
   // await initRedisConnection();
-  redisClient
   await connectDB();
-
+  // seedRoles();
   app.use(mainRouter.getRoute());
 
   app.use(errorHandler);

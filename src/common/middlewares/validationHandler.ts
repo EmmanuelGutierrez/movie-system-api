@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
+import { HttpException } from '../utils/error/HttpException';
 
 export const validationHandler = (
   Dto: { new (): any },
@@ -22,6 +23,7 @@ export const validationHandler = (
         property: e.property,
         constraints: e.constraints,
       }));
+      // throw new HttpException(errorRes.toString(), 400);
       return res.status(400).json(errorRes);
     }
     next();

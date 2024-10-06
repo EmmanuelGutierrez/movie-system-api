@@ -17,6 +17,10 @@ const envVars = {
   REDIS_PORT: process.env.REDIS_PORT!,
   REDIS_DB: process.env.REDIS_DB!,
   REDIS_PASSWORD: process.env.REDIS_PASSWORD!,
+
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
 };
 export const configInitJoi = () => {
   const envSchema = Joi.object().keys({
@@ -34,6 +38,9 @@ export const configInitJoi = () => {
     REDIS_PORT: Joi.number().required(),
     REDIS_DB: Joi.number().required(),
     REDIS_PASSWORD: Joi.string(),
+    CLOUDINARY_API_KEY: Joi.string().required(),
+    CLOUDINARY_API_SECRET: Joi.string().required(),
+    CLOUDINARY_CLOUD_NAME: Joi.string().required(),
   });
   const { error } = envSchema
     .prefs({ errors: { label: 'key' } })
@@ -67,5 +74,10 @@ export const config = {
     password: process.env.REDIS_PASSWORD,
     port: Number(process.env.REDIS_PORT),
     db: Number(process.env.REDIS_DB),
+  },
+  cloudinary: {
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
   },
 };

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { MovieI } from '../interface/movie.interface';
+import { FileModel } from '../../file/model/file.model';
 
 export const movieSchema = new mongoose.Schema<MovieI>(
   {
@@ -9,7 +10,8 @@ export const movieSchema = new mongoose.Schema<MovieI>(
     actors: { type: [String], default: [] },
     directors: { type: [String], default: [] },
     duration: { type: Number, min: 1, required: true },
-    relase: { type: Number, required: true },
+    release: { type: Number, required: true },
+    poster: { type: mongoose.Schema.Types.ObjectId, ref: FileModel.modelName },
     active: { type: Boolean, default: true },
     updatedAt: { type: Number },
     createdAt: { type: Number },

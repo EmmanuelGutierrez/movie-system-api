@@ -1,4 +1,5 @@
-import { commonI } from "../../../common/models/common.model";
+import { commonI } from '../../../common/models/common.model';
+import { FileI } from '../../file/interface/file.interface';
 
 export interface MovieI extends commonI {
   name: string;
@@ -7,6 +8,7 @@ export interface MovieI extends commonI {
   actors: string[];
   directors: string[];
   duration: number;
-  relase: number;
+  release: number;
   active: boolean;
+  poster: FileI;
 }

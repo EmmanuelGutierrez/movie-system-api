@@ -6,6 +6,8 @@ import { FilterDto } from './dto/filter.dto';
 import { IdDto } from './dto/id.dto';
 import { cacheRedisHandler } from '../../common/middlewares/cache-redis';
 import { roleHandler } from '../../common/middlewares/role-handler';
+import { uploadFile } from '../../common/middlewares/upload-file';
+import { authJWT } from '../../common/middlewares/auth-jwt';
 
 export class MovieRouter {
   private router = Router();
@@ -17,7 +19,9 @@ export class MovieRouter {
   private initializeRouters () {
     this.router.post(
       '/create',
-      roleHandler(),
+      // authJWT,
+      // roleHandler(),
+      // uploadFile(),
       validationHandler(CreateMovieDto),
       (req, res, next) =>
         this.movieController.createMovieController(req, res, next),

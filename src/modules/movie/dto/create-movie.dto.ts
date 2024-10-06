@@ -24,7 +24,11 @@ export class CreateMovieDto {
 
   @IsNumber()
   @IsNotEmpty()
-  readonly relase!: number;
+  readonly release!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly imageBase64!: string;
 
   @IsOptional()
   @IsArray()
@@ -40,6 +44,11 @@ export class CreateMovieDto {
   @IsArray()
   @IsString({ each: true })
   readonly directors?: string[];
+
+  // @IsNotEmpty()
+  // @IsArray()
+  // @IsString({ each: true })
+  // readonly images?: string[];
 }
 
 /* export const CreateMovieSchema: Schema = {
@@ -49,6 +58,6 @@ export class CreateMovieDto {
   actors: { isArray: true, optional: true },
   directors: { isArray: true, optional: true },
   duration: { isNumeric: true },
-  relase: { isNumeric: true },
+  release: { isNumeric: true },
 };
  */

@@ -10,7 +10,6 @@ export class AuthService {
 
   generateJWT(user: UserI) {
     const payload = { email: user.email, id: user._id, role: user.role.type };
-    console.log(payload);
     return sign(payload, config.api.jwtSecret, { expiresIn: '1h' });
   }
 

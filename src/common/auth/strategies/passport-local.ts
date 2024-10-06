@@ -16,12 +16,10 @@ passport.use(
   new LocalStrategy(
     { usernameField: 'email', passwordField: 'password' },
     async (email, password, done) => {
-      console.log('local 1');
       try {
         const user = await UserModel.findOne({ email })
           .select('+password')
           .populate('role');
-        console.log('local 2');
         if (!user) {
           throw new HttpException('Incorrect email or password', 404);
         }

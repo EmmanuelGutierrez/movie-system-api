@@ -23,7 +23,7 @@ export class UpdateMovieDto  {
 
   @IsNumber()
   @IsOptional()
-  readonly relase?: number;
+  readonly release?: number;
 
   @IsOptional()
   @IsArray()

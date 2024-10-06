@@ -10,7 +10,6 @@ export function roleHandler(rolesArray: roles[] = [roles.ADMIN]) {
       throw new HttpException('Unauth user', 401);
     }
     const { role } = req.user;
-    console.log('role', req.user, role);
     if (!rolesArray.includes(role.type)) {
       throw new HttpException('Unauth user', 401);
 

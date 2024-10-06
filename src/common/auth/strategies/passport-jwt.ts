@@ -18,7 +18,6 @@ const opts: StrategyOptions = {
 passport.use(
   new Strategy(opts, async (payload: UserToken, done) => {
     try {
-      console.log('done', payload);
       const iswokring = isRedisWorking();
       if (iswokring) {
         const key = payload.id;
@@ -30,7 +29,7 @@ passport.use(
             return done(null, cachedValue);
           }
         } else {
-          const user = await UserModel.findById(payload.id);
+          const user = await UserModel.findById(payload.id).populate('role');
           if (!user) {
             throw new HttpException('Unauthorized', 401);
           }
@@ -41,7 +40,7 @@ passport.use(
         }
       } else {
         console.log('no working');
-        const user = await UserModel.findById(payload.id);
+        const user = await UserModel.findById(payload.id).populate("role");
         if (!user) {
           throw new HttpException('Unauthorized', 401);
         }
@@ -53,7 +52,7 @@ passport.use(
       }
       return done(null, user);
     } catch (error) {
-      console.log(error);
+      console.log('jwt error', error);
       return done(error);
     }
   }),

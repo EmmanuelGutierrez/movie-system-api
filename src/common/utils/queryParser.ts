@@ -22,7 +22,6 @@ export function queryParser(objeto: StringObject) {
         } else {
           const numero = Number(fixElement);
           const finalValue = isNaN(numero) ? fixElement : numero;
-          console.log('final', finalValue);
           return finalValue;
         }
       });

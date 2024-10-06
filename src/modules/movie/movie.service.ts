@@ -6,14 +6,23 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MovieModel } from './model/movie.model';
 import { MovieI } from './interface/movie.interface';
 import { redisClient } from '../../redis/redis-client';
+import { FileService } from '../file/file.service';
+import { FileModel } from '../file/model/file.model';
 
 export class MovieService {
   private movieModel = MovieModel;
+  private fileService = new FileService();
 
-  async createMovie(data: CreateMovieDto) {
+  async createMovie({ imageBase64, ...data }: CreateMovieDto) {
     try {
       const movie = await this.movieModel.create(data);
+      const image = await this.fileService.create(
+        imageBase64,
+        movie.id,
+        `movies/files/posters`,
+      );
 
+      movie.poster = image;
       return movie.save();
     } catch (error: any) {
       throw new HttpException(error.message ?? 'Error', 500);
@@ -22,7 +31,6 @@ export class MovieService {
 
   async getAll(params: FilterDto) {
     try {
-
       // const movies = await this.movieModel.find();
       const { limit = 10, page = 1, genres, description } = params;
       const filters: FilterQuery<MovieI> = {};
@@ -36,7 +44,8 @@ export class MovieService {
       const movies = await this.movieModel
         .find(filters)
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .populate('poster');
 
       const total = await this.movieModel.countDocuments();
       return { page, inThisPage: movies.length, total, data: movies };

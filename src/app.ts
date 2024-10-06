@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { config, configInitJoi } from './config/config';
 import { connectDB } from './database/database';
 import { MainRouter } from './router';
@@ -16,7 +17,9 @@ configInitJoi();
 const app = express();
 const main = async () => {
   const mainRouter = new MainRouter();
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({limit:'10mb'}));
+  app.use(cors())
+  // app.use(bodyParser.urlencoded({ extended: true }));
   app.use(queryParserHandler);
   // await initRedisConnection();
   await connectDB();

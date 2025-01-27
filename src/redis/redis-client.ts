@@ -52,7 +52,7 @@ export const redisClient = new Redis({
 });
 redisClient.on('connect', () => console.info('Connected redis'));
 
-redisClient.on('error', () => console.error('Error redis'));
+redisClient.on('error', (e) => console.error('Error redis',e));
 redisClient.on('connecting', () => console.error('Connecting redis'));
 redisClient.on('reconnecting', () => console.error('Reconnecting redis'));
 redisClient.on('wait', () => console.error('Waiting redis'));

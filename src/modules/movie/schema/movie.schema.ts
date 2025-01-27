@@ -12,6 +12,9 @@ export const movieSchema = new mongoose.Schema<MovieI>(
     duration: { type: Number, min: 1, required: true },
     release: { type: Number, required: true },
     poster: { type: mongoose.Schema.Types.ObjectId, ref: FileModel.modelName },
+    photos: [
+      { type: mongoose.Schema.Types.ObjectId, ref: FileModel.modelName },
+    ],
     active: { type: Boolean, default: true },
     updatedAt: { type: Number },
     createdAt: { type: Number },

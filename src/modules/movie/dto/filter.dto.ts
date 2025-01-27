@@ -1,5 +1,30 @@
-
 import { IsArray, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    FilterDto:
+ *      type: object
+ *      properties:
+ *        limit:
+ *          type: integer
+ *          description: limit
+ *        page:
+ *          type: integer
+ *          description: page
+ *        description:
+ *          type: string
+ *          description: description
+ *        genres:
+ *          type: array
+ *          description: actors
+ *          items:
+ *            type: string
+ *
+ */
+
+
 
 export class FilterDto {
   @IsOptional()
@@ -18,5 +43,5 @@ export class FilterDto {
 
   @IsOptional()
   @IsString()
-  description?: string[];
+  description?: string;
 }

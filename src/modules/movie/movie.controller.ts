@@ -4,6 +4,8 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { FilterDto } from './dto/filter.dto';
 import { IdDto } from './dto/id.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
+import { ExtendedRequest } from './interface/ExtendedRequest';
 
 export class MovieController {
   private movieSerivce: MovieService = new MovieService();
@@ -17,6 +19,26 @@ export class MovieController {
     try {
       const movie = await this.movieSerivce.createMovie(req.body);
       return res.json(movie);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createMovieControllerPhotos(
+    req: ExtendedRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      if (req.files) {
+        const movie = await this.movieSerivce.createMoviePhotos(
+          req.body,
+          req.files,
+        );
+        return res.json(movie);
+      }
+
+      return res.status(500).json({ error: 'error' });
     } catch (error) {
       next(error);
     }
@@ -50,7 +72,6 @@ export class MovieController {
 
   async getOne(req: Request<IdDto>, res: Response, next: NextFunction) {
     try {
-      console.log(req.params);
       const movies = await this.movieSerivce.getOneById(req.params.id);
       return res.json(movies);
     } catch (error) {

@@ -1,10 +1,79 @@
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { movieGenres } from '../../../common/constant/genres.enum';
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    CreateMovieDto:
+ *      type: object
+ *      required :
+ *        - name
+ *        - description
+ *        - imageBase64
+ *        - duration
+ *        - release
+ *        - genres
+ *        - actors
+ *        - directors
+ *      properties:
+ *        name:
+ *          type: string
+ *          description: name
+ *        description:
+ *          type: string
+ *          description: description
+ *        imageBase64:
+ *          type: string
+ *          description: image in base64
+ *        duration:
+ *          type: integer
+ *          description: duration
+ *        release:
+ *          type: integer
+ *          description: release
+ *        genres:
+ *          type: array
+ *          description: genres
+ *          items:
+ *            type: string
+ *            enum:
+ *              - action
+ *              - adventure
+ *              - sci-fi
+ *              - comedy
+ *              - drama
+ *              - fantasy
+ *              - musical
+ *              - thriller
+ *              - horror
+ *              - wetern
+ *              - war
+ *              - historical
+ *              - crim
+ *              - noir
+ *              - romance
+ *              - animation
+ *              - documentary
+ *        actors:
+ *          type: array
+ *          description: actors
+ *          items:
+ *            type: string
+ *        directors:
+ *          type: array
+ *          description: directors
+ *          items:
+ *            type: string
+ *
+ */
 
 export class CreateMovieDto {
   // constructor(data: { name: string }) {
@@ -30,10 +99,11 @@ export class CreateMovieDto {
   @IsNotEmpty()
   readonly imageBase64!: string;
 
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  readonly genres?: string[];
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
+  @IsEnum(movieGenres, { each: true })
+  readonly genres?: movieGenres[];
 
   @IsOptional()
   @IsArray()
@@ -49,15 +119,4 @@ export class CreateMovieDto {
   // @IsArray()
   // @IsString({ each: true })
   // readonly images?: string[];
-}
-
-/* export const CreateMovieSchema: Schema = {
-  name: { isString: true },
-  description: { isString: true },
-  genre: { isArray: true, optional: true },
-  actors: { isArray: true, optional: true },
-  directors: { isArray: true, optional: true },
-  duration: { isNumeric: true },
-  release: { isNumeric: true },
-};
- */
+} 

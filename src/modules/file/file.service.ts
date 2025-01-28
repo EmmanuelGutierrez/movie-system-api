@@ -4,6 +4,14 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { FileI } from './interface/file.interface';
 import { FileModel } from './model/file.model';
 
+interface CreateManyI {
+  filesData: Express.Multer.File[] | string[];
+  external_id: string;
+  folder: string;
+  type?: fileType;
+  toBase64?: boolean;
+}
+
 export class FileService {
   fileModel = FileModel;
   cloudinaryService = new CloudinaryService();
@@ -12,7 +20,7 @@ export class FileService {
     const files = await this.fileModel.find();
     return files;
   }
-  async create(
+  async createBase64(
     fileData: string,
     external_id: string,
     folder: string,
@@ -36,22 +44,57 @@ export class FileService {
     });
     return file;
   }
-
-  async createMany(
-    filesData: string[],
+  async create(
+    fileData: Express.Multer.File,
     external_id: string,
     folder: string,
     type?: fileType,
   ) {
-    const limit = pLimit(5);
+    const cloudinaryRes = await this.cloudinaryService.uploadFileStream(
+      fileData,
+      external_id,
+      folder,
+      type,
+    );
+    if (!cloudinaryRes) {
+      throw new Error("No cloudinary response")
+    }
+    const file: FileI = await this.fileModel.create({
+      bytes: cloudinaryRes.bytes,
+      public_id: cloudinaryRes.public_id,
+      format: cloudinaryRes.format,
+      original_filename: cloudinaryRes.original_filename,
+      resource_type: cloudinaryRes.resource_type,
+      secure_url: cloudinaryRes.secure_url,
+      url: cloudinaryRes.url,
+      folder: cloudinaryRes.folder,
+    });
+    return file;
+  }
+
+  async createMany({
+    filesData,
+    external_id,
+    folder,
+    type,
+    toBase64,
+  }: CreateManyI) {
     const filesToUpload = filesData.map((file) => {
-      return limit(async () => {
-        const res = await this.create(file, external_id, folder, type);
+      if (toBase64) {
+        const res = this.create(
+          file as Express.Multer.File,
+          external_id,
+          folder,
+          type,
+        );
         return res;
-      });
+      } else {
+        const res = this.createBase64(file as string, external_id, folder, type);
+        return res;
+      }
     });
 
-    const resProm = await Promise.allSettled(filesToUpload);
+    const resProm = await Promise.all(filesToUpload);
     return resProm;
   }
 }

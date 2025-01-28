@@ -8,6 +8,9 @@ import { MovieI } from './interface/movie.interface';
 import { redisClient } from '../../redis/redis-client';
 import { FileService } from '../file/file.service';
 import { FileModel } from '../file/model/file.model';
+import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
+import { request } from 'express';
+import { PhotosPoster } from '../file/type/multiple-files.type';
 
 export class MovieService {
   private movieModel = MovieModel;
@@ -16,13 +19,36 @@ export class MovieService {
   async createMovie({ imageBase64, ...data }: CreateMovieDto) {
     try {
       const movie = await this.movieModel.create(data);
-      const image = await this.fileService.create(
+      const image = await this.fileService.createBase64(
         imageBase64,
         movie.id,
         `movies/files/posters`,
       );
 
       movie.poster = image;
+      return movie.save();
+    } catch (error: any) {
+      throw new HttpException(error.message ?? 'Error', 500);
+    }
+  }
+
+  async createMoviePhotos(data: CreateMoviePhotosDto, files: PhotosPoster) {
+    try {
+      const movie = await this.movieModel.create(data);
+      const poster = await this.fileService.create(
+        files.poster[0],
+        movie.id,
+        `movies/files/posters`,
+      );
+      const photos = await this.fileService.createMany({
+        filesData: files.photos,
+        external_id: movie.id,
+        folder: `movies/files/posters`,
+        toBase64: true,
+      });
+
+      movie.photos = photos;
+      movie.poster = poster;
       return movie.save();
     } catch (error: any) {
       throw new HttpException(error.message ?? 'Error', 500);
@@ -45,7 +71,7 @@ export class MovieService {
         .find(filters)
         .skip((page - 1) * limit)
         .limit(limit)
-        .populate('poster');
+        .populate(['poster', 'photos']);
 
       const total = await this.movieModel.countDocuments();
       return { page, inThisPage: movies.length, total, data: movies };
@@ -57,7 +83,9 @@ export class MovieService {
   async getOneById(id: string) {
     try {
       // const movies = await this.movieModel.find();
-      const movie = await this.movieModel.findById(id);
+      const movie = await this.movieModel
+        .findById(id)
+        .populate(['poster', 'photos']);
 
       if (!movie) {
         throw new HttpException('Not found', 404);

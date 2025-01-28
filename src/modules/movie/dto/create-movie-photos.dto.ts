@@ -1,27 +1,29 @@
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { movieGenres } from '../../../common/constant/genres.enum';
-import { commonI } from '../../../common/models/common.model';
-import { FileI } from '../../file/interface/file.interface';
 
 /**
  * @swagger
  * components:
  *  schemas:
- *    Movie:
+ *    CreateMoviePhotosDto:
  *      type: object
  *      required :
- *        - _id
  *        - name
  *        - description
+ *        - imageBase64
  *        - duration
  *        - release
  *        - genres
  *        - actors
  *        - directors
- *        - createdAt
- *        - updatedAt
  *      properties:
- *        _id:
- *          type: string
  *        name:
  *          type: string
  *          description: name
@@ -29,10 +31,10 @@ import { FileI } from '../../file/interface/file.interface';
  *          type: string
  *          description: description
  *        duration:
- *          type: integer
+ *          type: string
  *          description: duration
  *        release:
- *          type: integer
+ *          type: string
  *          description: release
  *        genres:
  *          type: array
@@ -67,31 +69,47 @@ import { FileI } from '../../file/interface/file.interface';
  *          description: directors
  *          items:
  *            type: string
- *        poster:
- *          $ref: '#/components/schemas/File'
- *        photos:
- *          type: array
- *          description: photos
- *          items:
- *            $ref: '#/components/schemas/File'
- *        createdAt:
- *          type: integer
- *          description: release
- *        updatedAt:
- *          type: integer
- *          description: release
  *
  */
 
-export interface MovieI extends commonI {
-  name: string;
-  description: string;
-  genres: movieGenres[];
-  actors: string[];
-  directors: string[];
-  duration: number;
-  release: number;
-  active: boolean;
-  poster: FileI;
-  photos: FileI[];
-}
+export class CreateMoviePhotosDto {
+  // constructor(data: { name: string }) {
+  //   this.name = data.name;
+  // }
+  @IsString()
+  @IsNotEmpty()
+  readonly name!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly description!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly duration!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly release!: string;
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
+  @IsEnum(movieGenres, { each: true })
+  readonly genres?: movieGenres[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly actors?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly directors?: string[];
+
+  // @IsNotEmpty()
+  // @IsArray()
+  // @IsString({ each: true })
+  // readonly images?: string[];
+} 
+

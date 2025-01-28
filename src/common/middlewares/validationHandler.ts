@@ -8,7 +8,6 @@ export const validationHandler = (
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const data = new Dto();
-    // console.log(req)
     Object.assign(data, req[check]);
     const error = await validate(data, {
       whitelist: true,

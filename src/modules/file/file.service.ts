@@ -80,7 +80,6 @@ export class FileService {
     toBase64,
   }: CreateManyI) {
     const filesToUpload = filesData.map((file) => {
-      console.log(file);
       if (toBase64) {
         const res = this.create(
           file as Express.Multer.File,

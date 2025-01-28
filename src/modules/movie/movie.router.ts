@@ -215,6 +215,35 @@ export class MovieRouter {
       cacheRedisHandler,
       (req, res, next) => this.movieController.getAll(req, res, next),
     );
+
+    /**
+     * @swagger
+     * /movie/{id}:
+     *   get:
+     *     produces:
+     *       - application/json
+     *     tags:
+     *       - movie
+     *     parameters:
+     *       - name: id
+     *         in: path
+     *         required: true
+     *         description: ID of the movie to retrieve
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: Successful operation
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Movie'
+     *       '400':
+     *         description: Invalid ID
+     *       '404':
+     *         description: Movie not found
+     */
+
     this.router.get(
       '/:id',
       validationHandler(IdDto, 'params'),

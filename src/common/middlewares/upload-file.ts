@@ -11,6 +11,7 @@ function checkFileType(
 ) {
   const extname = types.test(path.extname(file.originalname).toLowerCase());
   const mimeType = types.test(file.mimetype);
+
   if (mimeType && extname) {
     return cb(null, true);
   }
@@ -40,6 +41,7 @@ export const uploadFile = (type: RegExp = /jpeg|jpg|png|gif/) => {
   const upload = multer({
     storage,
     fileFilter(req, file, callback) {
+      console.log('File type');
       checkFileType(file, callback, type);
     },
   });
@@ -56,20 +58,19 @@ export const uploadFileMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
-):
-  Promise<void | { req: ExtendedRequest; res: Response; next: NextFunction; }> => {
+) => {
   try {
     await new Promise((resolve, reject) => {
       const upl = uploadFile();
       upl(req, res, (err) => {
         if (err) {
-          // console.log('multer error', err);
+          console.log('multer error', err);
           reject(err);
         }
-        next();
+        resolve(true);
       });
-    });
+    }).then(() => next());
   } catch (error) {
-    res.status(500).json({ error: 'Error de middleware' });
+    res.status(500).json({ error: 'Error al subir el archivo' });
   }
 };

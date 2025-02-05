@@ -11,6 +11,8 @@ import { FileModel } from '../file/model/file.model';
 import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
 import { request } from 'express';
 import { PhotosPoster } from '../file/type/multiple-files.type';
+import { CreateMovieParsedDto } from './dto/create-movie-parsed.dto';
+import { UpdateMovieParsedDto } from './dto/update-movie-parsed.dto';
 
 export class MovieService {
   private movieModel = MovieModel;
@@ -32,24 +34,66 @@ export class MovieService {
     }
   }
 
-  async createMoviePhotos(data: CreateMoviePhotosDto, files: PhotosPoster) {
+  async createMoviePhotos(data: CreateMovieParsedDto, files: PhotosPoster) {
     try {
       const movie = await this.movieModel.create(data);
-      const poster = await this.fileService.create(
-        files.poster[0],
-        movie.id,
-        `movies/files/posters`,
-      );
-      const photos = await this.fileService.createMany({
-        filesData: files.photos,
-        external_id: movie.id,
-        folder: `movies/files/posters`,
-        toBase64: true,
-      });
+      if (files.poster) {
+        const poster = await this.fileService.create(
+          files.poster[0],
+          `movies/files/posters`,
+        );
+        movie.poster = poster;
+      }
+      if (files.photos) {
+        const photos = await this.fileService.createMany({
+          filesData: files.photos,
+          external_id: movie.id,
+          folder: `movies/files/photos `,
+          toBase64: true,
+        });
 
-      movie.photos = photos;
-      movie.poster = poster;
+        movie.photos = photos;
+      }
       return movie.save();
+    } catch (error: any) {
+      throw new HttpException(error.message ?? 'Error', 500);
+    }
+  }
+
+  async update(movieId: string, data: UpdateMovieParsedDto, files: PhotosPoster) {
+    try {
+      console.log('update', files);
+      if (files.photos || files.poster) {
+        const movie = await this.getOneById(movieId);
+        
+        console.log("POSTER o foto")
+        if (files.poster) {
+          console.log("POSTER")//VERIFICAR POR QUE AL REVES NO FUNCIONA
+          const poster = await this.fileService.create(
+            files.poster[0],
+            `movies/files/posters`,
+          );
+          await this.fileService.deleteFile(movie.poster._id);
+          movie.poster = poster;
+        }
+        if (files.photos) {
+          await this.fileService.deleteFileMany({
+            ids: movie.photos.map((ph) => ph._id),
+            public_ids: movie.photos.map((ph) => ph._id),
+          });
+          const photos = await this.fileService.createMany({
+            filesData: files.photos,
+            external_id: movie.id,
+            folder: `movies/files/posters`,
+            toBase64: true,
+          });
+          movie.photos = photos;
+        }
+
+        await movie.save();
+      }
+      const res = await this.movieModel.updateOne({ _id: movieId }, data);
+      return res;
     } catch (error: any) {
       throw new HttpException(error.message ?? 'Error', 500);
     }
@@ -93,16 +137,6 @@ export class MovieService {
       return movie;
     } catch (error: any) {
       throw new HttpException(error.message ?? 'Not found', 404);
-    }
-  }
-
-  async update(movieId: string, data: UpdateMovieDto) {
-    try {
-      const movie = await this.movieModel.updateOne({ _id: movieId }, data);
-
-      return movie;
-    } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
     }
   }
 

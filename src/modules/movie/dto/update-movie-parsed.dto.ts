@@ -5,7 +5,7 @@ import { movieGenres } from '../../../common/constant/genres.enum';
  * @swagger
  * components:
  *  schemas:
- *    CreateMoviePhotosDto:
+ *    CreateMovieParsedDto:
  *      type: object
  *      properties:
  *        name:
@@ -15,10 +15,10 @@ import { movieGenres } from '../../../common/constant/genres.enum';
  *          type: string
  *          description: description
  *        duration:
- *          type: string
+ *          type: integer
  *          description: duration
  *        release:
- *          type: string
+ *          type: integer
  *          description: release
  *        genres:
  *          type: array
@@ -56,38 +56,39 @@ import { movieGenres } from '../../../common/constant/genres.enum';
  *
  */
 
-export class UpdateMovieDto {
+export class UpdateMovieParsedDto {
   // constructor(data: { name: string }) {
   //   this.name = data.name;
   // }
   @IsString()
-    @IsOptional()
-    readonly name?: string;
-  
-    @IsString()
-    @IsOptional()
-    readonly description?: string;
-  
-    @IsString()
-    @IsOptional()
-    readonly duration?: string;
-  
-    @IsString()
-    @IsOptional()
-    readonly release?: string;
-    // @IsOptional()
-    // @IsArray()
-    // @IsString({ each: true })
-    @IsEnum(movieGenres, { each: true })
-    readonly genres?: movieGenres[];
-  
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    readonly actors?: string[];
-  
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    readonly directors?: string[];
+  @IsOptional()
+  readonly name?: string;
+
+  @IsNumber()
+  @IsOptional()
+  readonly description?: number;
+
+  @IsNumber()
+  @IsOptional()
+  readonly duration?: number;
+
+  @IsString()
+  @IsOptional()
+  readonly release?: string;
+  // @IsOptional()
+  // @IsArray()
+  // @IsString({ each: true })
+  @IsOptional()
+  @IsEnum(movieGenres, { each: true })
+  readonly genres?: movieGenres[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly actors?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly directors?: string[];
 }

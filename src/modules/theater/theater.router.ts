@@ -1,31 +1,20 @@
 import { Request, Router } from 'express';
-import { MovieController } from './movie.controller';
-import { CreateMovieDto } from './dto/create-movie.dto';
+import { TheaterController } from './theater.controller';
+import { CreateTheaterDto } from './dto/create-theater.dto';
 import { validationHandler } from '../../common/middlewares/validationHandler';
-import { FilterDto } from './dto/filter.dto';
 import { IdDto } from '../../common/dto/id.dto';
+import { FilterDto } from './dto/filter.dto';
 import { cacheRedisHandler } from '../../common/middlewares/cache-redis';
-import { roleHandler } from '../../common/middlewares/role-handler';
-import {
-  uploadFile,
-  uploadFileMiddleware,
-} from '../../common/middlewares/upload-file';
-import { authJWT } from '../../common/middlewares/auth-jwt';
-import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
-import { ExtendedRequest } from './interface/ExtendedRequest';
-import { bodyParserHandler } from '../../common/middlewares/body-parser';
-import { CreateMovieParsedDto } from './dto/create-movie-parsed.dto';
-import { UpdateMovieParsedDto } from './dto/update-movie-parsed.dto';
 
 /**
  * @swagger
  * tags:
- *  - name: movie
+ *  - name: theater
  */
 
-export class MovieRouter {
+export class TheaterRouter {
   private router = Router();
-  private movieController: MovieController = new MovieController();
+  private theaterController: TheaterController = new TheaterController();
   constructor() {
     this.initializeRouters();
   }
@@ -33,86 +22,38 @@ export class MovieRouter {
   private initializeRouters() {
     /**
      * @swagger
-     * /movie/create-old:
+     * /theater/create:
      *  post:
      *    produces:
      *      - application/json
      *    tags:
-     *      - movie
+     *      - theater
      *    requestBody:
-     *      description: Create a new movie
+     *      description: Create a new theater
      *      required: true
      *      content:
      *        application/json:
      *          schema:
-     *            $ref: '#components/schemas/CreateMovieDto'
+     *            $ref: '#components/schemas/CreateTheaterDto'
      *        application/xml:
      *          schema:
-     *            $ref: '#components/schemas/CreateMovieDto'
+     *            $ref: '#components/schemas/CreateTheaterDto'
      *        application/x-www-form-urlencoded:
      *          schema:
-     *            $ref: '#components/schemas/CreateMovieDto'
+     *            $ref: '#components/schemas/CreateTheaterDto'
      *    responses:
      *      '200':
      *        description: Succssesfull operation
      *        content:
      *          application/json:
      *            schema:
-     *              $ref: '#components/schemas/Movie'
+     *              $ref: '#components/schemas/Theater'
      *          application/xml:
      *            schema:
-     *              $ref: '#components/schemas/Movie'
+     *              $ref: '#components/schemas/Theater'
      *          application/x-www-form-urlencoded:
      *            schema:
-     *              $ref: '#components/schemas/Movie'
-     *      '400':
-     *        description: Invalid input
-     *      '422':
-     *        description: Validation exception
-     */
-    this.router.post(
-      '/create-old',
-      // authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(CreateMovieDto),
-      (req, res, next) =>
-        this.movieController.createMovieController(req, res, next),
-    );
-    /**
-     * @swagger
-     * /movie/create:
-     *  post:
-     *    produces:
-     *      - application/json
-     *    tags:
-     *      - movie
-     *    requestBody:
-     *      description: Create a new movie
-     *      required: true
-     *      content:
-     *        application/json:
-     *          schema:
-     *            $ref: '#components/schemas/CreateMovieDto'
-     *        application/xml:
-     *          schema:
-     *            $ref: '#components/schemas/CreateMovieDto'
-     *        application/x-www-form-urlencoded:
-     *          schema:
-     *            $ref: '#components/schemas/CreateMovieDto'
-     *    responses:
-     *      '200':
-     *        description: Succssesfull operation
-     *        content:
-     *          application/json:
-     *            schema:
-     *              $ref: '#components/schemas/Movie'
-     *          application/xml:
-     *            schema:
-     *              $ref: '#components/schemas/Movie'
-     *          application/x-www-form-urlencoded:
-     *            schema:
-     *              $ref: '#components/schemas/Movie'
+     *              $ref: '#components/schemas/Theater'
      *      '400':
      *        description: Invalid input
      *      '422':
@@ -123,36 +64,31 @@ export class MovieRouter {
       // authJWT,
       // roleHandler(),
       // uploadFile(),
-      uploadFileMiddleware,
-      bodyParserHandler,
-      validationHandler(CreateMovieParsedDto),
+      validationHandler(CreateTheaterDto),
       (req, res, next) =>
-        this.movieController.createMovieControllerPhotos(
-          req as ExtendedRequest<CreateMovieParsedDto>,
-          res,
-          next,
-        ),
+        this.theaterController.createTheaterController(req, res, next),
     );
-    this.router.put(
-      '/update/:id',
-      uploadFileMiddleware,
-      bodyParserHandler,
-      validationHandler(UpdateMovieParsedDto),
-      (req, res, next) =>
-        this.movieController.updateMovieController(
-          req as ExtendedRequest<UpdateMovieParsedDto>,
-          res,
-          next,
-        ),
-    );
+    
+    // this.router.put(
+    //   '/update/:id',
+    //   uploadFileMiddleware,
+    //   bodyParserHandler,
+    //   validationHandler(UpdateTheaterParsedDto),
+    //   (req, res, next) =>
+    //     this.theaterController.updateTheaterController(
+    //       req as ExtendedRequest<UpdateTheaterParsedDto>,
+    //       res,
+    //       next,
+    //     ),
+    // );
     /**
      * @swagger
-     * /movie:
+     * /theater:
      *  get:
      *    produces:
      *      - application/json
      *    tags:
-     *      - movie
+     *      - theater
      *    parameters:
      *      - name: limit
      *        in: query
@@ -220,22 +156,22 @@ export class MovieRouter {
       '/',
       validationHandler(FilterDto, 'query'),
       cacheRedisHandler,
-      (req, res, next) => this.movieController.getAll(req, res, next),
+      (req, res, next) => this.theaterController.getAll(req, res, next),
     );
 
     /**
      * @swagger
-     * /movie/{id}:
+     * /theater/{id}:
      *   get:
      *     produces:
      *       - application/json
      *     tags:
-     *       - movie
+     *       - theater
      *     parameters:
      *       - name: id
      *         in: path
      *         required: true
-     *         description: ID of the movie to retrieve
+     *         description: ID of the theater to retrieve
      *         schema:
      *           type: string
      *     responses:
@@ -244,24 +180,18 @@ export class MovieRouter {
      *         content:
      *           application/json:
      *             schema:
-     *               $ref: '#/components/schemas/Movie'
+     *               $ref: '#/components/schemas/Theater'
      *       '400':
      *         description: Invalid ID
      *       '404':
-     *         description: Movie not found
+     *         description: Theater not found
      */
 
     this.router.get(
       '/:id',
       validationHandler(IdDto, 'params'),
       (req: Request<{ id: string }>, res, next) =>
-        this.movieController.getOne(req, res, next),
-    );
-    this.router.delete(
-      '/:id',
-      validationHandler(IdDto, 'params'),
-      (req: Request<{ id: string }>, res, next) =>
-        this.movieController.logicDelete(req, res, next),
+        this.theaterController.getOne(req, res, next),
     );
   }
 

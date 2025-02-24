@@ -1,4 +1,5 @@
 import { roles } from '../../../common/constant/role.enum';
+import { NotFoundException } from '../../../common/utils/error';
 import { HttpException } from '../../../common/utils/error/HttpException';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RoleModel } from './model/role.model';
@@ -17,13 +18,13 @@ export class RoleService {
 
       return role.save();
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
   async getByType(type: roles) {
     const role = await this.roleModel.findOne({ type });
     if (!role) {
-      throw new HttpException('Not found', 404);
+      throw new NotFoundException('Not found');
     }
     return role;
   }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, ErrorRequestHandler } from 'express';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { FilterDto } from './dto/filter.dto';
-import { IdDto } from './dto/id.dto';
+import { IdDto } from '../../common/dto/id.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
 import { ExtendedRequest } from './interface/ExtendedRequest';

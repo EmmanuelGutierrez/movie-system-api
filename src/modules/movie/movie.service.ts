@@ -13,6 +13,7 @@ import { request } from 'express';
 import { PhotosPoster } from '../file/type/multiple-files.type';
 import { CreateMovieParsedDto } from './dto/create-movie-parsed.dto';
 import { UpdateMovieParsedDto } from './dto/update-movie-parsed.dto';
+import { NotFoundException } from '../../common/utils/error';
 
 export class MovieService {
   private movieModel = MovieModel;
@@ -30,7 +31,7 @@ export class MovieService {
       movie.poster = image;
       return movie.save();
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 
@@ -56,7 +57,7 @@ export class MovieService {
       }
       return movie.save();
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 
@@ -95,7 +96,7 @@ export class MovieService {
       const res = await this.movieModel.updateOne({ _id: movieId }, data);
       return res;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 
@@ -132,7 +133,7 @@ export class MovieService {
         .populate(['poster', 'photos']);
 
       if (!movie) {
-        throw new HttpException('Not found', 404);
+        throw new NotFoundException('Not found');
       }
       return movie;
     } catch (error: any) {
@@ -150,7 +151,7 @@ export class MovieService {
 
       return res;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 }

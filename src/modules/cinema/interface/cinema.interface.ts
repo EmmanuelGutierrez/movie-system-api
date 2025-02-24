@@ -74,9 +74,6 @@ import { FileI } from '../../file/interface/file.interface';
  *          description: photos
  *          items:
  *            $ref: '#/components/schemas/File'
- *        active:
- *          type: boolean
- *          description: is active
  *        createdAt:
  *          type: integer
  *          description: release

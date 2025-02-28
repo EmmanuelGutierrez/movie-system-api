@@ -15,6 +15,7 @@ export async function cacheRedisHandler(
   const iswokring = isRedisWorking();
   if (iswokring) {
     const key = requestToKey(req);
+    console.log('key',key)
     const cachedValue = await readDataRedis(key);
     if (cachedValue) {
       try {

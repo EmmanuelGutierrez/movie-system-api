@@ -5,6 +5,7 @@ export const requestToKey = (req: Request) => {
     query: req.query,
     body: req.body,
   };
+  console.log('reqDataToHash', reqDataToHash);
   const hashed = sha1(reqDataToHash);
 
   return `${req.path}@${hashed}`;

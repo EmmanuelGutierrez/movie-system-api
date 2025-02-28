@@ -26,6 +26,7 @@
  */
 
 export interface SeatsI{
+    _id?:string
     row:number
     number:number
     occupied:boolean

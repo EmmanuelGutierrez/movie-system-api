@@ -8,6 +8,7 @@ import {
 } from '../../common/middlewares/upload-file';
 import { IdDto } from '../../common/dto/id.dto';
 import { FilterDto } from './dto/filter.dto';
+import { UpdateSeatDto } from './dto/update-seat.dto';
 
 /**
  * @swagger
@@ -71,7 +72,26 @@ export class ScreeningRouter {
       (req, res, next) =>
         this.screeningController.createScreeningController(req, res, next),
     );
-    
+
+    this.router.put(
+      '/updateSeat',
+      // authJWT,
+      // roleHandler(),
+      // uploadFile(),
+      validationHandler(UpdateSeatDto),
+      (req, res, next) => this.screeningController.updateSeat(req, res, next),
+    );
+
+    this.router.put(
+      '/temporarilyReserveSeat',
+      // authJWT,
+      // roleHandler(),
+      // uploadFile(),
+      validationHandler(UpdateSeatDto),
+      (req, res, next) =>
+        this.screeningController.temporarilyReserveSeat(req, res, next),
+    );
+
     // this.router.put(
     //   '/update/:id',
     //   uploadFileMiddleware,
@@ -160,6 +180,44 @@ export class ScreeningRouter {
       validationHandler(FilterDto, 'query'),
       cacheRedisHandler,
       (req, res, next) => this.screeningController.getAll(req, res, next),
+    );
+
+    /**
+     * @swagger
+     * /screening/seats/{id}:
+     *   get:
+     *     produces:
+     *       - application/json
+     *     tags:
+     *       - screening
+     *     parameters:
+     *       - name: id
+     *         in: path
+     *         required: true
+     *         description: ID of the screening to retrieve
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: Successful operation
+     *         content:
+     *           application/json:
+     *             schema:
+     *                type: array
+     *                items:  
+     *                  $ref: '#/components/schemas/Seat'
+     *       '400':
+     *         description: Invalid ID
+     *       '404':
+     *         description: Screening not found
+     */
+
+    this.router.get(
+      '/seats/:id',
+      validationHandler(IdDto, 'params'),
+      cacheRedisHandler,
+      (req: Request<{ id: string }>, res, next) =>
+        this.screeningController.getScreeningSeats(req, res, next),
     );
 
     /**

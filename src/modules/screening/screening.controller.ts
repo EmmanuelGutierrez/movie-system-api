@@ -3,6 +3,7 @@ import { ScreeningService } from './screening.service';
 import { CreateScreeningDto } from './dto/create-screening.dto';
 import { IdDto } from '../../common/dto/id.dto';
 import { FilterDto } from './dto/filter.dto';
+import { UpdateSeatDto } from './dto/update-seat.dto';
 
 export class ScreeningController {
   private screeningSerivce: ScreeningService = new ScreeningService();
@@ -60,12 +61,44 @@ export class ScreeningController {
     }
   }
 
-  // async logicDelete(req: Request<IdDto>, res: Response, next: NextFunction) {
-  //   try {
-  //     const screenings = await this.screeningSerivce.logicDelete(req.params.id);
-  //     return res.json(screenings);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+  async updateSeat(
+    req: Request<{}, {}, UpdateSeatDto>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const screenings = await this.screeningSerivce.updateSeat(req.body);
+      return res.json(screenings);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async temporarilyReserveSeat(
+    req: Request<{}, {}, UpdateSeatDto>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const screenings = await this.screeningSerivce.temporarilyReserveSeat(
+        req
+      );
+      return res.json(screenings);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getScreeningSeats(
+    req: Request<IdDto>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const screenings = await this.screeningSerivce.getScreeningSeats(
+        req.params.id,
+      );
+      return res.json(screenings);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

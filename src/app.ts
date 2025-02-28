@@ -14,13 +14,26 @@ import { seedRoles } from './seed/roles.seed';
 // import { initRedisConnection } from './redis/redis-client';
 import swaggerUiExpress from 'swagger-ui-express';
 import { swaggerDocs } from './common/utils/swagger-documentation';
+import logger from 'morgan';
+import { Server } from 'socket.io';
+import { createServer } from 'node:http';
+import { screeningSocket } from './modules/screening/screening.socket';
+
 configInitJoi();
 
 const app = express();
+const server = createServer(app);
+export const io = new Server(server, { connectionStateRecovery: {} });
 const main = async () => {
   const mainRouter = new MainRouter();
+  io.on('connection', (socket) => {
+    console.log('Connection socket');
+    screeningSocket(socket, io);
+  });
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(cors());
+  app.use(logger('dev'));
+
   // app.use('/api-doc/swagger.json', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerDocs));
   // console.log();
   // console.log();
@@ -41,7 +54,14 @@ const main = async () => {
 
   app.use(errorHandler);
 
-  app.listen(config.api.port, () => {
+  app.use((req, res, next) => {
+    res.status(404).json({
+      mensaje: 'not found',
+      url: req.originalUrl,
+    });
+  });
+
+  server.listen(config.api.port, () => {
     console.log(`running in ${config.api.port}`);
   });
 };

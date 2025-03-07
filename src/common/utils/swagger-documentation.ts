@@ -18,11 +18,12 @@ const swaggerOptions: swaggerJsDoc.Options = {
   //     },
   //   },
   apis: [
+    `./src/common/constant/**.ts`,
+    `./src/common/constant/**.**.ts`,
     `./src/router/index.ts`,
     `./src/modules/**/**.router.ts`,
     `./src/modules/**/dto/**.dto.ts`,
     `./src/modules/**/interface/**.interface.ts`,
   ],
 };
-console.log(`/router/index.ts`);
 export const swaggerDocs = swaggerJsDoc(swaggerOptions);

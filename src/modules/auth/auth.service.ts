@@ -22,7 +22,6 @@ export class AuthService {
   }
 
   async login(user: UserI) {
-    console.log('Logeando');
     const token = this.generateJWT(user);
     return { token };
   }

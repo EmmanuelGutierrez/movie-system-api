@@ -25,12 +25,16 @@
  *        screeningId:
  *          type: string
  *          description: screeningId
+ *        status:
+ *          $ref: "#/components/schemas/StatusSeat"
  *
  */
 
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ArrayMinSize, IsArray, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { statusSeat } from '../../../common/constant/seat-status.enum';
+import { Type } from 'class-transformer';
 
-export class UpdateSeatDto {
+export class SeatPosition {
   @IsNotEmpty()
   @IsNumber()
   row!: number;
@@ -38,12 +42,20 @@ export class UpdateSeatDto {
   @IsNotEmpty()
   @IsNumber()
   number!: number;
+}
+
+export class UpdateSeatDto {
+  @IsArray()
+  @ValidateNested()
+  @ArrayMinSize(1)
+  @Type(() => SeatPosition)
+  seatsPosition!: SeatPosition[];
 
   @IsNotEmpty()
   @IsString()
   screeningId!: string;
 
   @IsNotEmpty()
-  @IsBoolean()
-  occupied!: boolean;
+  @IsEnum(statusSeat)
+  status!: statusSeat;
 }

@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import express from 'express';
 import cors from 'cors';
 import { config, configInitJoi } from './config/config';
@@ -18,7 +19,6 @@ import logger from 'morgan';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
 import { screeningSocket } from './modules/screening/screening.socket';
-
 configInitJoi();
 
 const app = express();
@@ -29,6 +29,10 @@ const main = async () => {
   io.on('connection', (socket) => {
     console.log('Connection socket');
     screeningSocket(socket, io);
+
+    socket.on('error', (error) => {
+      console.log(error);
+    });
   });
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(cors());

@@ -8,7 +8,6 @@ export function roundedTime(timestamp:number, duracionMinutos:number) {
   // Redondear los minutos al múltiplo de 10 más cercano
   let minutos = fecha.getMinutes();
   let minutosRedondeados;
-console.log(minutos,minutosRedondeados)
   if (minutos % 10 === 0) {
     minutosRedondeados = minutos;
   } else {

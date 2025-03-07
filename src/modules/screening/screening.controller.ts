@@ -4,6 +4,7 @@ import { CreateScreeningDto } from './dto/create-screening.dto';
 import { IdDto } from '../../common/dto/id.dto';
 import { FilterDto } from './dto/filter.dto';
 import { UpdateSeatDto } from './dto/update-seat.dto';
+import { RequestAuth } from '../../common/auth/request-auth';
 
 export class ScreeningController {
   private screeningSerivce: ScreeningService = new ScreeningService();
@@ -74,14 +75,25 @@ export class ScreeningController {
     }
   }
   async temporarilyReserveSeat(
-    req: Request<{}, {}, UpdateSeatDto>,
+    req: RequestAuth<{}, {}, UpdateSeatDto>,
     res: Response,
     next: NextFunction,
   ) {
     try {
-      const screenings = await this.screeningSerivce.temporarilyReserveSeat(
-        req
-      );
+      const screenings =
+        await this.screeningSerivce.temporarilyReserveSeat(req);
+      return res.json(screenings);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async reserveSeat(
+    req: RequestAuth<{}, {}, UpdateSeatDto>,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const screenings = await this.screeningSerivce.reserveSeat(req);
       return res.json(screenings);
     } catch (error) {
       next(error);

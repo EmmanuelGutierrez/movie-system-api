@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { TheaterI } from '../interface/theater.interface';
 import { seatsSchema } from './seats.schema';
+import { CinemaModel } from '../../cinema/model/cinema.model';
 
 export const theaterSchema = new mongoose.Schema<TheaterI>(
   {
@@ -11,6 +12,10 @@ export const theaterSchema = new mongoose.Schema<TheaterI>(
       rows: Number,
       seatsPerRow: Number,
       layout: [{ type: seatsSchema, require: true }],
+    },
+    cinema: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: CinemaModel.modelName,
     },
     updatedAt: { type: Number },
     createdAt: { type: Number },

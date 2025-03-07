@@ -1,5 +1,5 @@
-
 import { commonI } from '../../../common/models/common.model';
+import { CinemaI } from '../../cinema/interface/cinema.interface';
 import { SeatsI } from './seats.interface';
 
 /**
@@ -31,9 +31,9 @@ import { SeatsI } from './seats.interface';
  *        seatingPlan:
  *          type: object
  *          properties:
- *            rows: 
+ *            rows:
  *              type: integer
- *            seatsPerRow: 
+ *            seatsPerRow:
  *              type: integer
  *            layout:
  *              type: array
@@ -54,10 +54,10 @@ export interface TheaterI extends commonI {
   name: string;
   feature: string;
   active: boolean;
+  cinema: CinemaI;
   seatingPlan: {
     rows: number;
     seatsPerRow: number;
     layout: [SeatsI];
   };
 }
-

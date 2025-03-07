@@ -1,6 +1,7 @@
 import { movieGenres } from '../../../common/constant/genres.enum';
 import { commonI } from '../../../common/models/common.model';
 import { FileI } from '../../file/interface/file.interface';
+import { TheaterI } from '../../theater/interface/theater.interface';
 
 /**
  * @swagger
@@ -12,11 +13,7 @@ import { FileI } from '../../file/interface/file.interface';
  *        - _id
  *        - name
  *        - description
- *        - duration
- *        - release
- *        - genres
- *        - actors
- *        - directors
+ *        - location
  *        - createdAt
  *        - updatedAt
  *      properties:
@@ -28,52 +25,14 @@ import { FileI } from '../../file/interface/file.interface';
  *        description:
  *          type: string
  *          description: description
- *        duration:
- *          type: integer
- *          description: duration
- *        release:
- *          type: integer
- *          description: release
- *        genres:
+ *        location:
+ *          type: string
+ *          description: location
+ *        features:
  *          type: array
  *          description: genres
  *          items:
  *            type: string
- *            enum:
- *              - action
- *              - adventure
- *              - sci-fi
- *              - comedy
- *              - drama
- *              - fantasy
- *              - musical
- *              - thriller
- *              - horror
- *              - wetern
- *              - war
- *              - historical
- *              - crim
- *              - noir
- *              - romance
- *              - animation
- *              - documentary
- *        actors:
- *          type: array
- *          description: actors
- *          items:
- *            type: string
- *        directors:
- *          type: array
- *          description: directors
- *          items:
- *            type: string
- *        poster:
- *          $ref: '#/components/schemas/File'
- *        photos:
- *          type: array
- *          description: photos
- *          items:
- *            $ref: '#/components/schemas/File'
  *        createdAt:
  *          type: integer
  *          description: release
@@ -83,15 +42,10 @@ import { FileI } from '../../file/interface/file.interface';
  *
  */
 
-export interface MovieI extends commonI {
+export interface CinemaI extends commonI {
   name: string;
   description: string;
-  genres: movieGenres[];
-  actors: string[];
-  directors: string[];
-  duration: number;
-  release: number;
-  active: boolean;
-  poster: FileI;
-  photos: FileI[];
+  // theaters: TheaterI[];
+  features: string[];
+  location:string
 }

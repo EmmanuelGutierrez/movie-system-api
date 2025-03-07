@@ -63,11 +63,9 @@ export class MovieService {
 
   async update(movieId: string, data: UpdateMovieParsedDto, files: PhotosPoster) {
     try {
-      console.log('update', files);
       if (files.photos || files.poster) {
         const movie = await this.getOneById(movieId);
         
-        console.log("POSTER o foto")
         if (files.poster) {
           console.log("POSTER")//VERIFICAR POR QUE AL REVES NO FUNCIONA
           const poster = await this.fileService.create(

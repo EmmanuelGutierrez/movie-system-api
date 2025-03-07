@@ -5,14 +5,22 @@ import { MovieService } from '../movie/movie.service';
 import { FilterDto } from './dto/filter.dto';
 import { FilterQuery } from 'mongoose';
 import { TheaterI } from './interface/theater.interface';
-import { SeatsI } from './interface/seats.interface';
 import { NotFoundException } from '../../common/utils/error';
+import { CinemaService } from '../cinema/cinema.service';
+import { SeatsI } from './interface/seats.interface';
+import { statusSeat } from '../../common/constant/seat-status.enum';
 
 export class TheaterService {
   private theaterModel = TheaterModel;
   private movieService = new MovieService();
+  private cinemaService = new CinemaService();
 
-  async createTheater({ rows, seatsPerRow, ...data }: CreateTheaterDto) {
+  async createTheater({
+    rows,
+    seatsPerRow,
+    cinemaId,
+    ...data
+  }: CreateTheaterDto) {
     try {
       // const existTheater = await this.userModel.exists({ email: data.email });
       // if (existTheater) {
@@ -21,9 +29,11 @@ export class TheaterService {
       const layout: SeatsI[] = [];
       for (let i = 1; i < rows + 1; i++) {
         for (let k = 1; k < seatsPerRow + 1; k++) {
-          layout.push({ occupied: false, number: k, row: i });
+          layout.push({ number: k, row: i,status:statusSeat.AVAILABLE });
         }
       }
+
+      const cinema =await this.cinemaService.getOneById(cinemaId);
 
       const theater = await this.theaterModel.create({
         seatingPlan: {
@@ -31,12 +41,13 @@ export class TheaterService {
           seatsPerRow,
           layout,
         },
+        cinema,
         ...data,
       });
 
       return theater.save();
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', error.status??500);
+      throw new HttpException(error.message ?? 'Error', error.status ?? 500);
     }
   }
 
@@ -48,17 +59,20 @@ export class TheaterService {
       }
       return theater;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', error.status??500);
+      throw new HttpException(error.message ?? 'Error', error.status ?? 500);
     }
   }
 
   async getAll(params: FilterDto) {
     try {
-      const { limit = 10, page = 1, name, rows,seatsPerRow } = params;
+      const { limit = 10, page = 1, name, rows, seatsPerRow,cinemaId } = params;
       const filters: FilterQuery<TheaterI> = {};
 
       if (name) {
         filters.name = { $rejex: name };
+      }
+      if (cinemaId) {
+        filters.cinema = cinemaId;
       }
       filters.active = true;
       const theaters = await this.theaterModel
@@ -67,11 +81,12 @@ export class TheaterService {
         .limit(limit)
         .populate([]);
       if (!theaters) {
-        throw new NotFoundException()
+        throw new NotFoundException();
       }
-      return theaters;
+     const total = await this.theaterModel.countDocuments();
+     return { page, inThisPage: theaters.length, total, data: theaters };
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', error.status??500);
+      throw new HttpException(error.message ?? 'Error', error.status ?? 500);
     }
   }
 }

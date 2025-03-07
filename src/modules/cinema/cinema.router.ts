@@ -1,26 +1,28 @@
 import { Request, Router } from 'express';
-import { ScreeningController } from './screening.controller';
-import { CreateScreeningDto } from './dto/create-screening.dto';
+import { CreateCinemaDto } from './dto/create-cinema.dto';
 import { validationHandler } from '../../common/middlewares/validationHandler';
+import { IdDto } from '../../common/dto/id.dto';
 import { cacheRedisHandler } from '../../common/middlewares/cache-redis';
+import { roleHandler } from '../../common/middlewares/role-handler';
 import {
+  uploadFile,
   uploadFileMiddleware,
 } from '../../common/middlewares/upload-file';
-import { IdDto } from '../../common/dto/id.dto';
-import { FilterDto } from './dto/filter.dto';
-import { UpdateSeatDto } from './dto/update-seat.dto';
 import { authJWT } from '../../common/middlewares/auth-jwt';
-import { RequestAuth } from '../../common/auth/request-auth';
+import { bodyParserHandler } from '../../common/middlewares/body-parser';
+import { CinemaController } from './cinema.controller';
+import { UpdateCinemaDto } from './dto/update-cinema.dto';
+import { FilterCinemaDto } from './dto/filter.dto';
 
 /**
  * @swagger
  * tags:
- *  - name: screening
+ *  - name: cinema
  */
 
-export class ScreeningRouter {
+export class CinemaRouter {
   private router = Router();
-  private screeningController: ScreeningController = new ScreeningController();
+  private cinemaController: CinemaController = new CinemaController();
   constructor() {
     this.initializeRouters();
   }
@@ -28,102 +30,72 @@ export class ScreeningRouter {
   private initializeRouters() {
     /**
      * @swagger
-     * /screening/create:
+     * /cinema/:
      *  post:
      *    produces:
      *      - application/json
      *    tags:
-     *      - screening
+     *      - cinema
      *    requestBody:
-     *      description: Create a new screening
+     *      description: Create a new cinema
      *      required: true
      *      content:
      *        application/json:
      *          schema:
-     *            $ref: '#components/schemas/CreateScreeningDto'
+     *            $ref: '#components/schemas/CreateCinemaDto'
      *        application/xml:
      *          schema:
-     *            $ref: '#components/schemas/CreateScreeningDto'
+     *            $ref: '#components/schemas/CreateCinemaDto'
      *        application/x-www-form-urlencoded:
      *          schema:
-     *            $ref: '#components/schemas/CreateScreeningDto'
+     *            $ref: '#components/schemas/CreateCinemaDto'
      *    responses:
      *      '200':
      *        description: Succssesfull operation
      *        content:
      *          application/json:
      *            schema:
-     *              $ref: '#components/schemas/Screening'
+     *              $ref: '#components/schemas/Cinema'
      *          application/xml:
      *            schema:
-     *              $ref: '#components/schemas/Screening'
+     *              $ref: '#components/schemas/Cinema'
      *          application/x-www-form-urlencoded:
      *            schema:
-     *              $ref: '#components/schemas/Screening'
+     *              $ref: '#components/schemas/Cinema'
      *      '400':
      *        description: Invalid input
      *      '422':
      *        description: Validation exception
      */
     this.router.post(
-      '/create',
-      // authJWT,
+      '/',
+      authJWT, 
       // roleHandler(),
       // uploadFile(),
-      validationHandler(CreateScreeningDto),
+      validationHandler(CreateCinemaDto),
       (req, res, next) =>
-        this.screeningController.createScreeningController(req, res, next),
+        this.cinemaController.createCinemaController(req, res, next),
     );
 
     this.router.put(
-      '/updateSeat',
-      // authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(UpdateSeatDto),
-      (req, res, next) => this.screeningController.updateSeat(req, res, next),
-    );
-
-    this.router.put(
-      '/temporarilyReserveSeat',
+      '/update/:id',
       authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(UpdateSeatDto),
+      validationHandler(UpdateCinemaDto),
       (req, res, next) =>
-        this.screeningController.temporarilyReserveSeat(req as RequestAuth, res, next),
+        this.cinemaController.updateCinemaController(
+          req as unknown as Request<IdDto, UpdateCinemaDto>,
+          res,
+          next,
+        ),
     );
-
-    this.router.put(
-      '/reserveSeat',
-      authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(UpdateSeatDto),
-      (req, res, next) =>
-        this.screeningController.reserveSeat(req as RequestAuth, res, next),
-    );
-
-    // this.router.put(
-    //   '/update/:id',
-    //   uploadFileMiddleware,
-    //   bodyParserHandler,
-    //   validationHandler(UpdateScreeningParsedDto),
-    //   (req, res, next) =>
-    //     this.screeningController.updateScreeningController(
-    //       req as ExtendedRequest<UpdateScreeningParsedDto>,
-    //       res,
-    //       next,
-    //     ),
-    // );
     /**
      * @swagger
-     * /screening:
+     * /cinema:
      *  get:
      *    produces:
      *      - application/json
      *    tags:
-     *      - screening
+     *      - cinema
      *    parameters:
      *      - name: limit
      *        in: query
@@ -189,24 +161,24 @@ export class ScreeningRouter {
 
     this.router.get(
       '/',
-      validationHandler(FilterDto, 'query'),
+      validationHandler(FilterCinemaDto, 'query'),
       cacheRedisHandler,
-      (req, res, next) => this.screeningController.getAll(req, res, next),
+      (req, res, next) => this.cinemaController.getAll(req, res, next),
     );
 
     /**
      * @swagger
-     * /screening/seats/{id}:
+     * /cinema/{id}:
      *   get:
      *     produces:
      *       - application/json
      *     tags:
-     *       - screening
+     *       - cinema
      *     parameters:
      *       - name: id
      *         in: path
      *         required: true
-     *         description: ID of the screening to retrieve
+     *         description: ID of the cinema to retrieve
      *         schema:
      *           type: string
      *     responses:
@@ -215,58 +187,25 @@ export class ScreeningRouter {
      *         content:
      *           application/json:
      *             schema:
-     *                type: array
-     *                items:  
-     *                  $ref: '#/components/schemas/Seat'
+     *               $ref: '#/components/schemas/Cinema'
      *       '400':
      *         description: Invalid ID
      *       '404':
-     *         description: Screening not found
-     */
-
-    this.router.get(
-      '/seats/:id',
-      authJWT,
-      validationHandler(IdDto, 'params'),
-      cacheRedisHandler,
-      (req: Request<{ id: string }>, res, next) =>
-        this.screeningController.getScreeningSeats(req, res, next),
-    );
-
-    /**
-     * @swagger
-     * /screening/{id}:
-     *   get:
-     *     produces:
-     *       - application/json
-     *     tags:
-     *       - screening
-     *     parameters:
-     *       - name: id
-     *         in: path
-     *         required: true
-     *         description: ID of the screening to retrieve
-     *         schema:
-     *           type: string
-     *     responses:
-     *       '200':
-     *         description: Successful operation
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: '#/components/schemas/Screening'
-     *       '400':
-     *         description: Invalid ID
-     *       '404':
-     *         description: Screening not found
+     *         description: Cinema not found
      */
 
     this.router.get(
       '/:id',
       validationHandler(IdDto, 'params'),
       (req: Request<{ id: string }>, res, next) =>
-        this.screeningController.getOne(req, res, next),
+        this.cinemaController.getOne(req, res, next),
     );
+    // this.router.delete(
+    //   '/:id',
+    //   validationHandler(IdDto, 'params'),
+    //   (req: Request<{ id: string }>, res, next) =>
+    //     this.cinemaController.logicDelete(req, res, next),
+    // );
   }
 
   getRoute() {

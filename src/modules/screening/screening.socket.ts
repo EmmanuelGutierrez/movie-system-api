@@ -5,4 +5,5 @@ export const screeningSocket = (socket: Socket, io: Server) => {
     console.log(`User ${userId} joined screening ${screeningId}`);
     socket.join(screeningId);
   });
+
 };

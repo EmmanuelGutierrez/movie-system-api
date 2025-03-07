@@ -1,4 +1,4 @@
-import {   IsNumber, IsOptional, IsString } from 'class-validator';
+import {   IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
 
 /**
  * @swagger
@@ -9,6 +9,8 @@ import {   IsNumber, IsOptional, IsString } from 'class-validator';
  *      properties:
  *        name:
  *          type: string
+ *        cinemaId:
+ *          type: string
  *
  */
 
@@ -16,5 +18,9 @@ export class UpdateScreeningDto {
   @IsString()
   @IsOptional()
   readonly name?: string;
+
+  @IsMongoId()
+  @IsOptional()
+  readonly cinemaId?: string;
 
 }

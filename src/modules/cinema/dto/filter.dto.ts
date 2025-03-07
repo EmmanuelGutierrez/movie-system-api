@@ -1,16 +1,10 @@
-import {
-  IsMongoId,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 /**
  * @swagger
  * components:
  *  schemas:
- *    FilterDto:
+ *    FilterCinemaDto:
  *      type: object
  *      properties:
  *        limit:
@@ -19,22 +13,18 @@ import {
  *        page:
  *          type: integer
  *          description: page
- *        rows:
- *          type: integer
- *          description: rows
- *        seatsPerRow:
- *          type: integer
- *          description: seatsPerRow
  *        name:
  *          type: string
  *          description: name
- *        cinemaId:
+ *        location:
  *          type: string
- *          description: name
+ *          description: location
  *
  */
 
-export class FilterDto {
+
+
+export class FilterCinemaDto {
   @IsOptional()
   @IsNumber()
   limit?: number;
@@ -44,21 +34,12 @@ export class FilterDto {
   @Min(0)
   page?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
-  rows?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(1)
-  seatsPerRow?: number;
 
   @IsOptional()
   @IsString()
   name?: string;
-  
+
   @IsOptional()
-  @IsMongoId()
-  cinemaId?: string;
+  @IsString()
+  location?: string;
 }

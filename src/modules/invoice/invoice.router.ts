@@ -1,26 +1,28 @@
 import { Request, Router } from 'express';
-import { ScreeningController } from './screening.controller';
-import { CreateScreeningDto } from './dto/create-screening.dto';
+import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { validationHandler } from '../../common/middlewares/validationHandler';
+import { IdDto } from '../../common/dto/id.dto';
 import { cacheRedisHandler } from '../../common/middlewares/cache-redis';
+import { roleHandler } from '../../common/middlewares/role-handler';
 import {
+  uploadFile,
   uploadFileMiddleware,
 } from '../../common/middlewares/upload-file';
-import { IdDto } from '../../common/dto/id.dto';
-import { FilterDto } from './dto/filter.dto';
-import { UpdateSeatDto } from './dto/update-seat.dto';
 import { authJWT } from '../../common/middlewares/auth-jwt';
-import { RequestAuth } from '../../common/auth/request-auth';
+import { bodyParserHandler } from '../../common/middlewares/body-parser';
+import { InvoiceController } from './invoice.controller';
+import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { FilterInvoiceDto } from './dto/filter.dto';
 
 /**
  * @swagger
  * tags:
- *  - name: screening
+ *  - name: invoice
  */
 
-export class ScreeningRouter {
+export class InvoiceRouter {
   private router = Router();
-  private screeningController: ScreeningController = new ScreeningController();
+  private invoiceController: InvoiceController = new InvoiceController();
   constructor() {
     this.initializeRouters();
   }
@@ -28,102 +30,71 @@ export class ScreeningRouter {
   private initializeRouters() {
     /**
      * @swagger
-     * /screening/create:
+     * /invoice/create:
      *  post:
      *    produces:
      *      - application/json
      *    tags:
-     *      - screening
+     *      - invoice
      *    requestBody:
-     *      description: Create a new screening
+     *      description: Create a new invoice
      *      required: true
      *      content:
      *        application/json:
      *          schema:
-     *            $ref: '#components/schemas/CreateScreeningDto'
+     *            $ref: '#components/schemas/CreateInvoiceDto'
      *        application/xml:
      *          schema:
-     *            $ref: '#components/schemas/CreateScreeningDto'
+     *            $ref: '#components/schemas/CreateInvoiceDto'
      *        application/x-www-form-urlencoded:
      *          schema:
-     *            $ref: '#components/schemas/CreateScreeningDto'
+     *            $ref: '#components/schemas/CreateInvoiceDto'
      *    responses:
      *      '200':
      *        description: Succssesfull operation
      *        content:
      *          application/json:
      *            schema:
-     *              $ref: '#components/schemas/Screening'
+     *              $ref: '#components/schemas/Invoice'
      *          application/xml:
      *            schema:
-     *              $ref: '#components/schemas/Screening'
+     *              $ref: '#components/schemas/Invoice'
      *          application/x-www-form-urlencoded:
      *            schema:
-     *              $ref: '#components/schemas/Screening'
+     *              $ref: '#components/schemas/Invoice'
      *      '400':
      *        description: Invalid input
      *      '422':
      *        description: Validation exception
      */
     this.router.post(
-      '/create',
+      '/',
       // authJWT,
       // roleHandler(),
       // uploadFile(),
-      validationHandler(CreateScreeningDto),
+      validationHandler(CreateInvoiceDto),
       (req, res, next) =>
-        this.screeningController.createScreeningController(req, res, next),
+        this.invoiceController.createInvoiceController(req, res, next),
     );
-
-    this.router.put(
-      '/updateSeat',
-      // authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(UpdateSeatDto),
-      (req, res, next) => this.screeningController.updateSeat(req, res, next),
-    );
-
-    this.router.put(
-      '/temporarilyReserveSeat',
-      authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(UpdateSeatDto),
-      (req, res, next) =>
-        this.screeningController.temporarilyReserveSeat(req as RequestAuth, res, next),
-    );
-
-    this.router.put(
-      '/reserveSeat',
-      authJWT,
-      // roleHandler(),
-      // uploadFile(),
-      validationHandler(UpdateSeatDto),
-      (req, res, next) =>
-        this.screeningController.reserveSeat(req as RequestAuth, res, next),
-    );
-
+   
     // this.router.put(
     //   '/update/:id',
-    //   uploadFileMiddleware,
-    //   bodyParserHandler,
-    //   validationHandler(UpdateScreeningParsedDto),
+    //   validationHandler(UpdateInvoiceDto),
     //   (req, res, next) =>
-    //     this.screeningController.updateScreeningController(
-    //       req as ExtendedRequest<UpdateScreeningParsedDto>,
+    //     this.invoiceController.updateInvoiceController(
+    //       req as unknown as Request<IdDto, UpdateInvoiceDto>,
     //       res,
     //       next,
     //     ),
     // );
     /**
      * @swagger
-     * /screening:
+     * /invoice:
      *  get:
      *    produces:
      *      - application/json
      *    tags:
-     *      - screening
+     *      - invoice
      *    parameters:
      *      - name: limit
      *        in: query
@@ -189,24 +160,24 @@ export class ScreeningRouter {
 
     this.router.get(
       '/',
-      validationHandler(FilterDto, 'query'),
+      validationHandler(FilterInvoiceDto, 'query'),
       cacheRedisHandler,
-      (req, res, next) => this.screeningController.getAll(req, res, next),
+      (req, res, next) => this.invoiceController.getAll(req, res, next),
     );
 
     /**
      * @swagger
-     * /screening/seats/{id}:
+     * /invoice/{id}:
      *   get:
      *     produces:
      *       - application/json
      *     tags:
-     *       - screening
+     *       - invoice
      *     parameters:
      *       - name: id
      *         in: path
      *         required: true
-     *         description: ID of the screening to retrieve
+     *         description: ID of the invoice to retrieve
      *         schema:
      *           type: string
      *     responses:
@@ -215,58 +186,25 @@ export class ScreeningRouter {
      *         content:
      *           application/json:
      *             schema:
-     *                type: array
-     *                items:  
-     *                  $ref: '#/components/schemas/Seat'
+     *               $ref: '#/components/schemas/Invoice'
      *       '400':
      *         description: Invalid ID
      *       '404':
-     *         description: Screening not found
-     */
-
-    this.router.get(
-      '/seats/:id',
-      authJWT,
-      validationHandler(IdDto, 'params'),
-      cacheRedisHandler,
-      (req: Request<{ id: string }>, res, next) =>
-        this.screeningController.getScreeningSeats(req, res, next),
-    );
-
-    /**
-     * @swagger
-     * /screening/{id}:
-     *   get:
-     *     produces:
-     *       - application/json
-     *     tags:
-     *       - screening
-     *     parameters:
-     *       - name: id
-     *         in: path
-     *         required: true
-     *         description: ID of the screening to retrieve
-     *         schema:
-     *           type: string
-     *     responses:
-     *       '200':
-     *         description: Successful operation
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: '#/components/schemas/Screening'
-     *       '400':
-     *         description: Invalid ID
-     *       '404':
-     *         description: Screening not found
+     *         description: Invoice not found
      */
 
     this.router.get(
       '/:id',
       validationHandler(IdDto, 'params'),
       (req: Request<{ id: string }>, res, next) =>
-        this.screeningController.getOne(req, res, next),
+        this.invoiceController.getOne(req, res, next),
     );
+    // this.router.delete(
+    //   '/:id',
+    //   validationHandler(IdDto, 'params'),
+    //   (req: Request<{ id: string }>, res, next) =>
+    //     this.invoiceController.logicDelete(req, res, next),
+    // );
   }
 
   getRoute() {

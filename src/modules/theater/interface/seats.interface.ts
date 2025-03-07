@@ -7,11 +7,14 @@
  *      type: object
  *      required :
  *        - _id
+ *        - userId
  *        - row
  *        - number
  *        - occupied
  *      properties:
  *        _id:
+ *          type: string
+ *        userId:
  *          type: string
  *        row:
  *          type: integer
@@ -19,15 +22,19 @@
  *        number:
  *          type: integer
  *          description: number
- *        occupied:
- *          type: boolean
- *          description: occupied
+ *        status:
+ *          $ref: "#/components/schemas/StatusSeat"
  *
  */
 
-export interface SeatsI{
-    _id?:string
-    row:number
-    number:number
-    occupied:boolean
+import { statusSeat } from "../../../common/constant/seat-status.enum";
+
+export interface SeatsI {
+  _id?: string;
+  userId?: string;
+  row: number;
+  number: number;
+  // occupied: boolean;
+  status:statusSeat
+
 }

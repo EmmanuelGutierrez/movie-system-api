@@ -2,8 +2,6 @@ import multer, { memoryStorage, FileFilterCallback } from 'multer';
 import path from 'path';
 import { HttpException } from '../utils/error/HttpException';
 import { NextFunction, Request, Response } from 'express';
-import { CreateMoviePhotosDto } from '../../modules/movie/dto/create-movie-photos.dto';
-import { ExtendedRequest } from '../../modules/movie/interface/ExtendedRequest';
 function checkFileType(
   file: Express.Multer.File,
   cb: FileFilterCallback,
@@ -18,16 +16,6 @@ function checkFileType(
   cb(new HttpException('Error type', 400));
 }
 
-/* function checkFileType(types: RegExp) {
-  return (file: Express.Multer.File, cb: FileFilterCallback) => {
-    const extname = types.test(path.extname(file.originalname).toLowerCase());
-    const mimeType = types.test(file.mimetype);
-    if (mimeType && extname) {
-      return cb(null, true);
-    }
-    cb(new HttpException('Error type', 400));
-  };
-} */
 
 const storage = memoryStorage();
 
@@ -41,7 +29,6 @@ export const uploadFile = (type: RegExp = /jpeg|jpg|png|gif/) => {
   const upload = multer({
     storage,
     fileFilter(req, file, callback) {
-      console.log('File type');
       checkFileType(file, callback, type);
     },
   });

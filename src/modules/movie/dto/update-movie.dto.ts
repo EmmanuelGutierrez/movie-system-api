@@ -1,10 +1,11 @@
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { movieGenres } from '../../../common/constant/genres.enum';
 
 /**
  * @swagger
  * components:
  *  schemas:
- *    UpdateMovieDto:
+ *    CreateMoviePhotosDto:
  *      type: object
  *      properties:
  *        name:
@@ -13,20 +14,35 @@ import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
  *        description:
  *          type: string
  *          description: description
- *        imageBase64:
- *          type: string
- *          description: image in base64
  *        duration:
- *          type: integer
+ *          type: string
  *          description: duration
  *        release:
- *          type: integer
+ *          type: string
  *          description: release
  *        genres:
  *          type: array
  *          description: genres
  *          items:
  *            type: string
+ *            enum:
+ *              - action
+ *              - adventure
+ *              - sci-fi
+ *              - comedy
+ *              - drama
+ *              - fantasy
+ *              - musical
+ *              - thriller
+ *              - horror
+ *              - wetern
+ *              - war
+ *              - historical
+ *              - crim
+ *              - noir
+ *              - romance
+ *              - animation
+ *              - documentary
  *        actors:
  *          type: array
  *          description: actors
@@ -45,37 +61,33 @@ export class UpdateMovieDto {
   //   this.name = data.name;
   // }
   @IsString()
-  @IsOptional()
-  readonly name?: string;
-
-  @IsString()
-  @IsOptional()
-  readonly description?: string;
-
-  @IsNumber()
-  @IsOptional()
-  readonly duration?: number;
-
-  @IsNumber()
-  @IsOptional()
-  readonly release?: number;
-
-  @IsString()
-  @IsOptional()
-  readonly imageBase64?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  readonly genres?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  readonly actors?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  readonly directors?: string[];
+    @IsOptional()
+    readonly name?: string;
+  
+    @IsString()
+    @IsOptional()
+    readonly description?: string;
+  
+    @IsString()
+    @IsOptional()
+    readonly duration?: string;
+  
+    @IsString()
+    @IsOptional()
+    readonly release?: string;
+    // @IsOptional()
+    // @IsArray()
+    // @IsString({ each: true })
+    @IsEnum(movieGenres, { each: true })
+    readonly genres?: movieGenres[];
+  
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    readonly actors?: string[];
+  
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    readonly directors?: string[];
 }

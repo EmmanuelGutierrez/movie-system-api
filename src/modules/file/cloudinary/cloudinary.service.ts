@@ -26,6 +26,19 @@ export class CloudinaryService extends CloudinaryProvider {
       Readable.from(file.buffer).pipe(uploadStream);
     });
   }
+
+  async deleteFile(public_id: string) {
+    const deleteFileData = await cloudinary.uploader.destroy(public_id);
+    console.log('deleteFileData', deleteFileData);
+    return deleteFileData;
+  }
+
+  async deleteFileMany(public_ids: string[]) {
+    const deleteFileData = await cloudinary.api.delete_resources(public_ids);
+    console.log('deleteFileData', deleteFileData);
+    return deleteFileData;
+  }
+
   async uploadFileBase64(
     file: string,
     external_id: string,
@@ -35,7 +48,7 @@ export class CloudinaryService extends CloudinaryProvider {
     try {
       console.log('cloud', external_id, folder, resource_type);
       const result = await cloudinary.uploader.upload(file, {
-        resource_type:'auto',
+        resource_type: 'auto',
         folder,
         public_id: external_id,
         // overwrite: true,

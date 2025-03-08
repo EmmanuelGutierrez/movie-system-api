@@ -3,7 +3,7 @@ import { MovieController } from './movie.controller';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { validationHandler } from '../../common/middlewares/validationHandler';
 import { FilterDto } from './dto/filter.dto';
-import { IdDto } from './dto/id.dto';
+import { IdDto } from '../../common/dto/id.dto';
 import { cacheRedisHandler } from '../../common/middlewares/cache-redis';
 import { roleHandler } from '../../common/middlewares/role-handler';
 import {
@@ -15,6 +15,7 @@ import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
 import { ExtendedRequest } from './interface/ExtendedRequest';
 import { bodyParserHandler } from '../../common/middlewares/body-parser';
 import { CreateMovieParsedDto } from './dto/create-movie-parsed.dto';
+import { UpdateMovieParsedDto } from './dto/update-movie-parsed.dto';
 
 /**
  * @swagger
@@ -127,16 +128,22 @@ export class MovieRouter {
       validationHandler(CreateMovieParsedDto),
       (req, res, next) =>
         this.movieController.createMovieControllerPhotos(
-          req as ExtendedRequest,
+          req as ExtendedRequest<CreateMovieParsedDto>,
           res,
           next,
         ),
     );
     this.router.put(
-      '/update',
-      validationHandler(CreateMovieDto),
-      (req: Request<{ id: string }>, res, next) =>
-        this.movieController.updateMovieController(req, res, next),
+      '/update/:id',
+      uploadFileMiddleware,
+      bodyParserHandler,
+      validationHandler(UpdateMovieParsedDto),
+      (req, res, next) =>
+        this.movieController.updateMovieController(
+          req as ExtendedRequest<UpdateMovieParsedDto>,
+          res,
+          next,
+        ),
     );
     /**
      * @swagger

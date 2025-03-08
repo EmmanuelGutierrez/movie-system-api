@@ -1,4 +1,4 @@
-export type HttpExceptionBodyMessage = string | string[];
+export type HttpExceptionBodyMessage = string | string[] | (Body & number);
 
 export interface HttpExceptionBody {
   message?: HttpExceptionBodyMessage;

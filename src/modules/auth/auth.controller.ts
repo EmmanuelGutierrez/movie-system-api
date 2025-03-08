@@ -25,7 +25,6 @@ export class AuthController {
     next: NextFunction,
   ) {
     try {
-        console.log("login")
       const user = await this.authSerivce.login(req.user as unknown as UserI);
       return res.json(user);
     } catch (error) {

@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, Validate } from 'class-validator';
-import { IsObjectId } from '../../../common/utils/IsObjectId';
+import { IsObjectId } from '../utils/IsObjectId';
 
 /**
  * @swagger

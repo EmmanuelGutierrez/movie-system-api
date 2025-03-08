@@ -2,10 +2,12 @@ import { NextFunction, Request, Response, ErrorRequestHandler } from 'express';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { FilterDto } from './dto/filter.dto';
-import { IdDto } from './dto/id.dto';
+import { IdDto } from '../../common/dto/id.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { CreateMoviePhotosDto } from './dto/create-movie-photos.dto';
 import { ExtendedRequest } from './interface/ExtendedRequest';
+import { CreateMovieParsedDto } from './dto/create-movie-parsed.dto';
+import { UpdateMovieParsedDto } from './dto/update-movie-parsed.dto';
 
 export class MovieController {
   private movieSerivce: MovieService = new MovieService();
@@ -25,7 +27,7 @@ export class MovieController {
   }
 
   async createMovieControllerPhotos(
-    req: ExtendedRequest,
+    req: ExtendedRequest<CreateMovieParsedDto>,
     res: Response,
     next: NextFunction,
   ) {
@@ -45,12 +47,16 @@ export class MovieController {
   }
 
   async updateMovieController(
-    req: Request<IdDto, {}, UpdateMovieDto>,
+    req: ExtendedRequest<UpdateMovieParsedDto>,
     res: Response,
     next: NextFunction,
   ) {
     try {
-      const movie = await this.movieSerivce.update(req.params.id, req.body);
+      const movie = await this.movieSerivce.update(
+        req.params.id,
+        req.body,
+        req.files,
+      );
       return res.json(movie);
     } catch (error) {
       next(error);

@@ -1,6 +1,7 @@
 import { Redis, RedisOptions, CommonRedisOptions } from 'ioredis';
 import { config } from '../config/config';
-
+import { Server } from 'socket.io';
+import { createAdapter } from '@socket.io/redis-adapter';
 // export const redisClient=createcli;
 
 // export const initRedisConnection = async () => {
@@ -50,14 +51,26 @@ export const redisClient = new Redis({
   db: config.redis.db,
   password: config.redis.password,
 });
+
+// const subRedisClient = redisClient.duplicate();
+
+// const io = new Server({ adapter: createAdapter(redisClient, subRedisClient) });
+
 redisClient.on('connect', () => console.info('Connected redis'));
 
-redisClient.on('error', (e) => console.error('Error redis',e));
+redisClient.on('error', (e) => console.error('Error redis', e));
 redisClient.on('connecting', () => console.error('Connecting redis'));
 redisClient.on('reconnecting', () => console.error('Reconnecting redis'));
 redisClient.on('wait', () => console.error('Waiting redis'));
 redisClient.on('ready', () => console.error('Ready redis'));
 redisClient.on('close', () => console.error('close redis'));
+
+// io.on('connection', (socket) => {
+//   socket.on('joinScreening', (screeningId) => {
+//     socket.join(screeningId);
+//     console.log(`User ${socket.id} joined screening ${screeningId}`);
+//   });
+// });
 
 export function isRedisWorking() {
   console.log('status', redisClient.status);

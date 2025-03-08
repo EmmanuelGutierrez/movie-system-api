@@ -4,6 +4,7 @@ import { UserModel } from './model/user.model';
 import * as bcrypt from 'bcrypt';
 import { RoleService } from './role/role.service';
 import { roles } from '../../common/constant/role.enum';
+import { NotFoundException } from '../../common/utils/error';
 
 export class UserService {
   private userModel = UserModel;
@@ -27,7 +28,7 @@ export class UserService {
 
       return user.save();
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 
@@ -35,11 +36,11 @@ export class UserService {
     try {
       const user = await this.userModel.findOne({ _id: id });
       if (!user) {
-        throw new HttpException('Not found', 404);
+        throw new NotFoundException('Not found');
       }
       return user;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 
@@ -47,11 +48,11 @@ export class UserService {
     try {
       const user = await this.userModel.findOne({ _id: id });
       if (!user) {
-        throw new HttpException('Not found', 404);
+        throw new NotFoundException('Not found');
       }
       return user;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 
@@ -61,11 +62,11 @@ export class UserService {
         .findOne({ _id: id })
         .select('+password');
       if (!user) {
-        throw new HttpException('Not found', 404);
+        throw new NotFoundException('Not found');
       }
       return user;
     } catch (error: any) {
-      throw new HttpException(error.message ?? 'Error', 500);
+      throw new HttpException(error.message ?? 'Error', error.status??500);
     }
   }
 }
